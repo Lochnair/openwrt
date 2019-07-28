@@ -35,6 +35,15 @@ define Build/addpattern
 	-mv "$@.new" "$@"
 endef
 
+define Build/append-md5sum-bin
+       $(STAGING_DIR_HOST)/bin/mkhash md5 $@ | sed 's/../\\\\x&/g' |\
+               xargs echo -ne >> $@
+endef
+
+define Build/append-string
+       echo -n $(1) >> $@
+endef
+
 define Build/cybertan-trx
 	@echo -n '' > $@-empty.bin
 	-$(STAGING_DIR_HOST)/bin/trx -o $@.new \
@@ -70,6 +79,17 @@ define Build/pisen_wmb001n-factory
     $(if $(SOURCE_DATE_EPOCH),--mtime="@$(SOURCE_DATE_EPOCH)") \
     -C "$@.tmp" . | gzip -9n >> "$@" && \
   rm -rf "$@.tmp"
+endef
+
+define Build/teltonika-fw-fake-checksum
+       # Teltonika U-Boot web based firmware upgrade/recovery routine compares
+       # 16 bytes from md5sum1[16] field in TP-Link v1 header (offset: 76 bytes
+       # from begin of the firmware file) with 16 bytes stored just before
+       # 0xdeadc0de marker. Values are only compared, MD5 sum is not verified.
+       let \
+               offs="$$(stat -c%s $@) - 20"; \
+               dd if=$@ bs=1 count=16 skip=76 |\
+               dd of=$@ bs=1 count=16 seek=$$offs conv=notrunc
 endef
 
 define Device/seama
@@ -969,6 +989,31 @@ define Device/sitecom_wlr-7100
   IMAGE_SIZE := 7488k
 endef
 TARGET_DEVICES += sitecom_wlr-7100
+
+define Device/teltonika_rut240
+  ATH_SOC := ar9330
+  DEVICE_VENDOR := Teltonika
+  DEVICE_MODEL := RUT240
+  DEVICE_PACKAGES := kmod-usb-core kmod-usb2 kmod-usb-chipidea2 kmod-usb-net \
+	kmod-usb-net-qmi-wwan uqmi -uboot-envtools
+  BOARDNAME := RUT240
+  IMAGE_SIZE := 15552k
+  KERNEL := kernel-bin | append-dtb | lzma | tplink-v1-header
+  KERNEL_INITRAMFS := $$(KERNEL)
+  IMAGES := factory.bin sysupgrade.bin
+  IMAGE/factory.bin := append-kernel | pad-to $$$$(BLOCKSIZE) | append-rootfs |\
+       pad-rootfs | teltonika-fw-fake-checksum | append-string RUT200019999master |\
+       append-md5sum-bin | check-size $$$$(IMAGE_SIZE)
+  IMAGE/sysupgrade.bin := append-kernel | pad-to $$$$(BLOCKSIZE) |\
+       append-rootfs | pad-rootfs | append-metadata |\
+       check-size $$$$(IMAGE_SIZE)
+  TPLINK_HWID := 0x32200002
+  TPLINK_HWREV := 0x1
+  TPLINK_HEADER_VERSION := 1
+  REVISION := RUT2xx
+  SUPPORTED_DEVICES += rut240
+endef
+TARGET_DEVICES += teltonika_rut240
 
 define Device/trendnet_tew-823dru
   ATH_SOC := qca9558
