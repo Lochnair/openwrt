@@ -593,7 +593,7 @@ define Device/tplink_archer-c50-v4
 endef
 TARGET_DEVICES += tplink_archer-c50-v4
 
-define Device/tplink,archer-mr200-v4
+define Device/tplink_archer-mr200-v4
   $(Device/tplink-v2)
   IMAGE_SIZE := 7872k
   DEVICE_MODEL := Archer MR200
@@ -606,7 +606,7 @@ define Device/tplink,archer-mr200-v4
   DEVICE_PACKAGES := kmod-mt76x0e kmod-usb2 kmod-usb-net kmod-usb-serial kmod-usb-net-qmi-wwan uqmi
   SUPPORTED_DEVICES := tplink,mr200-v4
 endef
-TARGET_DEVICES += tplink,archer-mr200-v4
+TARGET_DEVICES += tplink_archer-mr200-v4
 
 define Device/tplink_re200-v2
   $(Device/tplink-safeloader)
