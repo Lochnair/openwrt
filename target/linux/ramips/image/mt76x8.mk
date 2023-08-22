@@ -38,21 +38,6 @@ define Device/alfa-network_awusfree1
 endef
 TARGET_DEVICES += alfa-network_awusfree1
 
-define Device/ArcherMR200v4
-  $(Device/tplink)
-  DTS := ArcherMR200v4
-  SUPPORTED_DEVICES := mr200v4
-  IMAGE_SIZE := 7872k
-  DEVICE_TITLE := TP-Link ArcherMR200 v4
-  TPLINK_FLASHLAYOUT := 8MLmtk
-  TPLINK_HWID := 0x001D589B
-  TPLINK_HWREV := 0x93
-  TPLINK_HWREVADD := 0x13
-  TPLINK_HVERSION := 3
-  DEVICE_PACKAGES := kmod-mt76x0e kmod-usb2 kmod-usb-net kmod-usb-serial kmod-usb-net-qmi-wwan uqmi
-endef
-TARGET_DEVICES += ArcherMR200v4
-
 define Device/asus_rt-ac1200
   IMAGE_SIZE := 16064k
   DEVICE_VENDOR := ASUS
@@ -607,6 +592,21 @@ define Device/tplink_archer-c50-v4
   SUPPORTED_DEVICES += tplink,c50-v4
 endef
 TARGET_DEVICES += tplink_archer-c50-v4
+
+define Device/tplink,archer-mr200-v4
+  $(Device/tplink-v2)
+  IMAGE_SIZE := 7872k
+  DEVICE_MODEL := Archer MR200
+  DEVICE_VARIANT := v4
+  TPLINK_FLASHLAYOUT := 8MLmtk
+  TPLINK_HWID := 0x001D589B
+  TPLINK_HWREV := 0x93
+  TPLINK_HWREVADD := 0x13
+  TPLINK_HVERSION := 3
+  DEVICE_PACKAGES := kmod-mt76x0e kmod-usb2 kmod-usb-net kmod-usb-serial kmod-usb-net-qmi-wwan uqmi
+  SUPPORTED_DEVICES := tplink,mr200-v4
+endef
+TARGET_DEVICES += tplink,archer-mr200-v4
 
 define Device/tplink_re200-v2
   $(Device/tplink-safeloader)
