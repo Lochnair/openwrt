@@ -604,6 +604,8 @@ define Device/tplink_archer-mr200-v4
   TPLINK_HWREVADD := 0x13
   TPLINK_HVERSION := 3
   DEVICE_PACKAGES := kmod-mt76x0e kmod-usb2 kmod-usb-net kmod-usb-serial kmod-usb-net-qmi-wwan uqmi
+  IMAGES := sysupgrade.bin tftp-recovery.bin
+  IMAGE/tftp-recovery.bin := pad-extra 128k | $$(IMAGE/factory.bin)
   SUPPORTED_DEVICES := tplink,mr200-v4
 endef
 TARGET_DEVICES += tplink_archer-mr200-v4
